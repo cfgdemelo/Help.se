@@ -1,11 +1,9 @@
 package br.sp.cfg.help;
 
 import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -29,10 +27,8 @@ import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -41,7 +37,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -53,7 +48,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -89,11 +83,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private FirebaseAuth auth;
     private static final String TAG = "LoginActivity";
 
-    private LoginButton loginButton;
     private CallbackManager callBackManager;
     private FirebaseAuth.AuthStateListener authListener;
-    private AccessTokenTracker accessTokenTracker;
-    private AccessToken accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,14 +135,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         };
         callBackManager = CallbackManager.Factory.create();
 
-        loginButton = (LoginButton) findViewById(R.id.login_button);
+        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions("email", "public_profile");
         loginButton.registerCallback(callBackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(LoginActivity.this, "Sucesso", Toast.LENGTH_SHORT).show();
-
                 handleFacebookAccessToken(loginResult.getAccessToken());
+
+                Intent it = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(it);
             }
 
             @Override
@@ -305,12 +297,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
+        return email.contains("@") && email.contains(".");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
     }
 
